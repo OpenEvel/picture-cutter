@@ -2,17 +2,20 @@
 # -*- coding: utf-8 -*-
 """
 модуль utils
-Реализует полезные функция и классы для работы с изображениями
+В этом модуле мы добавляем новый уровень логики при работе с изображения
+Теперь изображение состоит не из пискселей, а из кусочков - картинок поменьше
+с которыми удобно работать
 """
-import cv2
-import numpy as np
+
 from copy import deepcopy
 import os
+import numpy as np
+import cv2
 
 # стандартный размер кусочка изображения
 # нужен исключительно для удобства
 # то есть кусок изображения - это квадрат p*p
-# но в реализуемых классах ниже, можно назначить свою ширину(p_x) и высоту(p_y) 
+# но в реализуемых классах ниже, можно назначить свою ширину(p_x) и высоту(p_y)
 p = 64
 
 def lens_segments(seq, black = 0):
@@ -33,11 +36,11 @@ def lens_segments(seq, black = 0):
                 lens_white[-1] += 1
             else:
                 if i_last_white - i == 2:
-                     lens_white[-1] += 2
+                    lens_white[-1] += 2
                 else:
                     lens_white.append(1)
                 i_last_white = i
-                
+
         before_color = cur_color
 
     return lens_white
