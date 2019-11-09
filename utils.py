@@ -102,7 +102,7 @@ class Image:
         self.img = deepcopy(img)
         self.y_size = self.img.shape[0]
         self.x_size = self.img.shape[1]
-        self.p_y = p_y        
+        self.p_y = p_y
         self.p_x = p_x
 
     @classmethod
@@ -125,10 +125,10 @@ class Image:
     @property
     def rows(self):
         return self.y_size // self.p_y
-    
+
     @property
     def cols(self):
-        return self.x_size // self.p_x    
+        return self.x_size // self.p_x
 
     def __len__(self):
         return self.cols*self.rows
@@ -142,8 +142,8 @@ class Image:
             if index < 0:
                 index = len(self) - abs(index)
 
-            if index < 0  or index > len(self):
-                message =  f"Вышли за пределы картиники [0:{len(self)}], index={index}"
+            if index < 0 or index > len(self):
+                message = f"Вышли за пределы картиники [0:{len(self)}], index={index}"
                 raise IndexError(message)
 
             row, col = divmod(index, self.cols)
@@ -157,7 +157,7 @@ class Image:
 
             cls = self.__class__
 
-            return cls(block,  p_y=self.p_y, p_x=self.p_x)
+            return cls(block, p_y=self.p_y, p_x=self.p_x)
         else:
             # index - это slice
             mas = []
@@ -170,8 +170,8 @@ class Image:
         if index < 0:
             index = len(self) - abs(index)
 
-        if index < 0  or index > len(self):
-            message =  f"Вышли за пределы картиники [0:{len(self)}], index={index}"
+        if index < 0 or index > len(self):
+            message = f"Вышли за пределы картиники [0:{len(self)}], index={index}"
             raise IndexError(message)
 
         rol, col = divmod(index, self.cols)
@@ -200,7 +200,7 @@ class Image:
 
         cls = self.__class__
 
-        new_img = cls.new(y_size = self.y_size + block.y_size, x_size = self.x_size)
+        new_img = cls.new(y_size=self.y_size + block.y_size, x_size=self.x_size)
         new_img.p_x = block.x_size & self.x_size
 
         top = cls(block.img, p_x=new_img.p_x)
@@ -227,7 +227,7 @@ class Image:
 
         cls = self.__class__
 
-        new_img = cls.new(y_size = self.y_size + block.y_size, x_size = self.x_size)
+        new_img = cls.new(y_size=self.y_size + block.y_size, x_size=self.x_size)
         new_img.p_x = block.x_size & self.x_size
 
         top = cls(self.img, p_x=new_img.p_x)
@@ -253,7 +253,7 @@ class Image:
 
         cls = self.__class__
 
-        new_img = cls.new(y_size = self.y_size, x_size = self.x_size + block.x_size)
+        new_img = cls.new(y_size=self.y_size, x_size=self.x_size + block.x_size)
         new_img.p_y = block.y_size & self.y_size
 
         left = cls(block.img, p_y=new_img.p_y)
@@ -280,7 +280,7 @@ class Image:
 
         cls = self.__class__
 
-        new_img = cls.new(y_size = self.y_size, x_size = self.x_size + block.x_size)
+        new_img = cls.new(y_size=self.y_size, x_size=self.x_size + block.x_size)
         new_img.p_y = block.y_size & self.y_size
 
         left = cls(self.img, p_y=new_img.p_y)
@@ -320,7 +320,7 @@ class Image:
         else:
             gray = self.img
 
-        return cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,3,2)
+        return cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 3, 2)
 
 
     def is_my(self, block, mode, thr1=30, thr2=50):
@@ -339,14 +339,14 @@ class Image:
         contours = new_img.get_contours(thr1, thr2)
         # th = new_img.get_threshold()
 
-        if mode in ('l' , 'r'):
+        if mode in ('l', 'r'):
             line_pixels = contours[:, -2 + new_img.x_size//2: new_img.x_size//2 + 2]
             line_len = new_img.y_size
         else:
             line_pixels = contours[-2 + new_img.y_size//2: new_img.y_size//2 + 2, :]
             line_len = new_img.x_size
 
-        cuts = []        
+        cuts = []
         for i in range(2):
             if mode in ('l', 'r'):
                 mas_cuts = [line_pixels[k, i] | line_pixels[k, i+1] for k in range(line_len)]
@@ -378,7 +378,7 @@ class Image:
 
         new_img = new_img.add(block, mode)
 
-        if mode in ('l' , 'r'):
+        if mode in ('l', 'r'):
             lol = new_img.img[:, -1 + new_img.x_size//2: new_img.x_size//2 + 1]
             line_len = new_img.y_size
         else:
@@ -418,7 +418,7 @@ class Image:
         center = np.uint8(center)
         res = center[label.flatten()]
         res2 = res.reshape((self.img.shape))
-        return res2[0,0]
+        return tuple(res2[0,0])
 
     def sort_color(self):
         """
@@ -426,7 +426,7 @@ class Image:
         самые светлые в начале
         """
         mas = [self[i] for i in range(len(self))]
-        mas.sort(key=(lambda img: tuple(img.color())), reverse=True)
+        mas.sort(key=(lambda img: img.color()), reverse=True)
         return mas
 
     def is_equal(self, block):
@@ -477,7 +477,7 @@ class MImage(Image):
             return super().__getitem__(indexs)
 
         cnt_indexs = len(indexs)
-        if cnt_indexs==2:
+        if cnt_indexs == 2:
 
             row, col = indexs
 
@@ -499,7 +499,7 @@ class MImage(Image):
                 down  = top + self.p_y
 
                 block = self.img[top:down, left:right]
-                return cls(block,  p_y=self.p_y, p_x=self.p_x)
+                return cls(block, p_y=self.p_y, p_x=self.p_x)
 
             elif not s_col:
                 img = None
@@ -544,7 +544,7 @@ class MImage(Image):
             super().__setitem__(indexs, block)
         else:
             cnt_indexs = len(indexs)
-            if cnt_indexs==2:
+            if cnt_indexs == 2:
 
                 row, col = indexs
 
@@ -555,8 +555,6 @@ class MImage(Image):
                 s_col = get_slice(col, self.cols)
                 if (not s_col) and col < 0:
                     col = self.cols - abs(col)
-
-                cls = self.__class__
 
                 if not s_row and not s_col:
                     left  = col*self.p_x
@@ -574,7 +572,7 @@ class MImage(Image):
                     i_bl = 0
                     for i in range(s_row.start, s_row.stop, s_row.step):
                         self[i, col] = block[i_bl, 0]
-                        i_bl+=1
+                        i_bl += 1
 
                     self.p_x = temp_p_x
 
@@ -596,7 +594,7 @@ class MImage(Image):
                     for i in range(s_row.start, s_row.stop, s_row.step):
                         j_bl = 0
                         for j in range(s_col.start, s_col.stop, s_col.step):
-                            self[i,j] = block[i_bl, j_bl]
+                            self[i,j] = block[i_bl,j_bl]
                             j_bl += 1
                         i_bl += 1
             else:
@@ -604,7 +602,8 @@ class MImage(Image):
 
 
 def find_best_combination(img, mas, mode='r'):
-    if not mas: return None, None, -1
+    if not mas:
+        return (None, None, -1)
 
     i_forward = 0
     max_prob_forward = img.is_my(mas[i_forward], mode)
@@ -648,11 +647,11 @@ def find_parts(image, *, mode='r', parts2 = [], parts3 = []):
 
         img4, i3, prob3 = find_best_combination(cur_img, parts3, mode)
 
-        p = max(prob1, prob2, prob3)
-        if p == prob1:
+        prob = max(prob1, prob2, prob3)
+        if prob == prob1:
             parts1.pop(i1)
             parts2.append(img2)
-        elif p == prob2:
+        elif prob == prob2:
             parts2.pop(i2)
             parts3.append(img3)
         else:
