@@ -46,7 +46,7 @@ def get_slice(i, len_seq):
     """
     i       - предполагаемый объект slice который надо обработать
     len_seq - длина последовательности
-    
+
     Из переданного объекта i возвращает форматированный объект slice
     Если i - это целое число(просто индекс), то возвращает None
     """
@@ -78,6 +78,10 @@ def get_slice(i, len_seq):
         return slice(start, stop, step)
 
 class ImageIterator:
+    """
+    Отдельный класс итераторов изображений
+    Нужен для одновременного обхода кусочков изображения
+    """
     def __init__(self, img):
         self.img = img
         self.start = 0
@@ -89,7 +93,6 @@ class ImageIterator:
         else:
             self.start += 1
             return self.img[self.start-1]
-
 
 class Image:
     def __init__(self, img, p_y=p, p_x=p):
