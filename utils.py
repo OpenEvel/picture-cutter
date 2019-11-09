@@ -9,8 +9,11 @@ import numpy as np
 from copy import deepcopy
 import os
 
+# стандартный размер кусочка изображения
+# нужен исключительно для удобства
+# то есть кусок изображения - это квадрат p*p
+# но в реализуемых классах ниже, можно назначить свою ширину(p_x) и высоту(p_y) 
 p = 64
-black = 0
 
 def lens_segments(seq, black = 0):
     lens_white = [0]
@@ -39,25 +42,37 @@ def lens_segments(seq, black = 0):
 
     return lens_white
 
-def get_slice(i, top_seq):
+def get_slice(i, len_seq):
+    """
+    i       - предполагаемый объект slice который надо обработать
+    len_seq - длина последовательности
+    
+    Из переданного объекта i возвращает форматированный объект slice
+    Если i - это целое число(просто индекс), то возвращает None
+    """
+
+    # сначала считаем, что i - это объект slice
     try:
         start = i.start
         stop  = i.stop
         step  = i.step
-    except AttributeError:        
+    # если не получилось извлечь нужные поля, значит i - это просто число
+    except AttributeError:
+        # тогда никакого слайса возвращать не нужно
         return None
+    # если исключений НЕ произошло, то обрабатываем поля i (точно объект slice)
     else:
-        if start==None:
+        if start is None:
             start = 0
         if start < 0:
-            start = top_seq - abs(start)
+            start = len_seq - abs(start)
 
-        if stop==None:
-            stop = top_seq
+        if stop is None:
+            stop = len_seq
         if stop < 0:
-            stop = top_seq - abs(stop)
+            stop = len_seq - abs(stop)
 
-        if step==None:
+        if step is None:
             step = 1
 
         return slice(start, stop, step)
